@@ -43,9 +43,8 @@ class App {
 			}
 			// initAudio(); // サウンド関数の実行。
 
-			// オブジェクトの生成。
-			buildGround(scene); // フィールド生成関数。
-			buildHouse(scene, 1); // 家生成関数。
+			// フィールドと家の生成。
+			buildDwellings(scene);
 
 			// レンダーループ
 			engine.runRenderLoop(() => {
@@ -67,21 +66,19 @@ class App {
 		// -------------------
 		// フィールド生成。
 		// -------------------
-		// const buildGround = () => {
-		function buildGround(scene: Scene): void {
+		function buildGround(scene: Scene, width: number, height: number): void {
 			// 地面用のマテリアル作成。
 			const groundMaterial = new StandardMaterial("groundMaterial", scene); // マテリアルオブジェクト生成。
 			groundMaterial.diffuseColor = new Color3(0, 1, 0); // マテリアルオブジェクトの設定。
 
 			// 地面の生成。
-			const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
+			const ground = MeshBuilder.CreateGround("ground", { width: width, height: height }, scene);
 			ground.material = groundMaterial; // マテリアルをアタッチ。
 		}
 
 		// -------------------
 		// ボックスの生成。
 		// -------------------
-		// const buildBox = (size: number = 1) => {
 		function buildBox(scene: Scene, size: number): Mesh {
 			// ボックスのマテリアル設定。
 			const boxMaterial = new StandardMaterial("boxMaterial", scene);
@@ -119,7 +116,6 @@ class App {
 		// -------------------
 		// 屋根の生成。
 		// -------------------
-		// const buildRoof = (size) => {
 		function buildRoof(scene: Scene, size: number): Mesh {
 			// 屋根のマテリアル設定。
 			const roofMaterial = new StandardMaterial("roofMaterial", scene);
@@ -138,12 +134,63 @@ class App {
 		// -------------------
 		// 家の生成。
 		// -------------------
-		// const buildHouse = (size: number = 1) => {
 		function buildHouse(scene: Scene, size: number = 1): Mesh | null {
 			const box = buildBox(scene, size);
 			const roof = buildRoof(scene, size);
 
 			return Mesh.MergeMeshes([box, roof], true, false, null, false, true); // 二番目のパラメータがtrueだと元のメッシュが破棄され、最後のパラメータがtrueだと元のマテリアルが個別に適用できるらしい。
+		}
+
+		// -------------------
+		// 複数の家インスタンスの生成。
+		// -------------------
+		function buildDwellings(scene) {
+			// フィールドの生成。
+			const ground = buildGround(scene, 15, 16); // フィールド生成関数。引数：scene, width, height
+
+			// 家インスタンスの元になるオブジェクト。
+			const house_small = buildHouse(scene, 1);
+			house_small.rotation.y = -Math.PI / 16;
+			house_small.position.x = -6.8;
+			house_small.position.z = 2.5;
+
+			const house_large = buildHouse(scene, 2);
+			house_large.rotation.y = -Math.PI / 16;
+			house_large.position.x = -4.5;
+			house_large.position.z = 3;
+
+			// 家インスタンスの配置・回転設定配列。
+			const places = []; // 配列：[size, rotation, x, z]
+			places.push([1, -Math.PI / 16, -6.8, 2.5]);
+			places.push([2, -Math.PI / 16, -4.5, 3]);
+			places.push([2, -Math.PI / 16, -1.5, 4]);
+			places.push([2, -Math.PI / 3, 1.5, 6]);
+			places.push([2, (15 * Math.PI) / 16, -6.4, -1.5]);
+			places.push([1, (15 * Math.PI) / 16, -4.1, -1]);
+			places.push([2, (15 * Math.PI) / 16, -2.1, -0.5]);
+			places.push([1, (5 * Math.PI) / 4, 0, -1]);
+			places.push([1, Math.PI + Math.PI / 2.5, 0.5, -3]);
+			places.push([2, Math.PI + Math.PI / 2.1, 0.75, -5]);
+			places.push([1, Math.PI + Math.PI / 2.25, 0.75, -7]);
+			places.push([2, Math.PI / 1.9, 4.75, -1]);
+			places.push([1, Math.PI / 1.95, 4.5, -3]);
+			places.push([2, Math.PI / 1.9, 4.75, -5]);
+			places.push([1, Math.PI / 1.9, 4.75, -7]);
+			places.push([2, -Math.PI / 3, 5.25, 2]);
+			places.push([1, -Math.PI / 3, 6, 4]);
+
+			// 家インスタンスの生成。
+			const houses = [];
+			for (let i = 0; i < places.length; i++) {
+				if (places[i][0] === 1) {
+					houses[i] = house_small.createInstance("house" + i);
+				} else {
+					houses[i] = house_large.createInstance("house" + i);
+				}
+				houses[i].rotation.y = places[i][1];
+				houses[i].position.x = places[i][2];
+				houses[i].position.z = places[i][3];
+			}
 		}
 	}
 }
