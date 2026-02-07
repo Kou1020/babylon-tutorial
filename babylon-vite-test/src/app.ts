@@ -1,3 +1,4 @@
+import { GLTF2Export } from "@babylonjs/serializers";
 import "@babylonjs/inspector";
 import {
 	//
@@ -15,11 +16,13 @@ import {
 	Color3,
 	Texture,
 	Vector4,
+	ImportMeshAsync,
 } from "@babylonjs/core";
+import "@babylonjs/loaders";
 
 class App {
 	constructor() {
-		const createScene = () => {
+		const createScene = async () => {
 			// 描画するcanvas
 			const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
 
@@ -44,7 +47,12 @@ class App {
 			// initAudio(); // サウンド関数の実行。
 
 			// フィールドと家の生成。
-			buildDwellings(scene);
+			// buildDwellings(scene);
+			try {
+				const result = await ImportMeshAsync("./meshes/village.glb", scene);
+			} catch (error) {
+				console.error("Failed to load GLB:", error);
+			}
 
 			// レンダーループ
 			engine.runRenderLoop(() => {
@@ -55,6 +63,12 @@ class App {
 			window.addEventListener("resize", function () {
 				engine.resize();
 			});
+
+			// setTimeout(async () => {
+			// 	const glb = await GLTF2Export.GLBAsync(scene, "myVillage");
+			// 	glb.downloadFiles();
+			// }, 1000);
+
 			return scene;
 		};
 
