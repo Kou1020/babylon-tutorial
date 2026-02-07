@@ -24,23 +24,23 @@ class App {
                 CreateStreamingSoundAsync("backgroundMusic", "https://amf-ms.github.io/AudioAssets/cc-music/electronic/Soulsonic--No.mp3", { autoplay: true, loop: true }, audioEngine);
             });
         }
-        const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
-        const groundMaterial = new StandardMaterial("groundMaterial");
+        const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 }, scene);
+        const groundMaterial = new StandardMaterial("groundMaterial", scene);
         groundMaterial.diffuseColor = new Color3(0, 1, 0);
         ground.material = groundMaterial;
-        const box1 = MeshBuilder.CreateBox("box1", {});
+        const box1 = MeshBuilder.CreateBox("box1", {}, scene);
         box1.scaling = new Vector3(1, 1, 1);
         box1.position = new Vector3(0, 0.5, 0);
-        const roof = MeshBuilder.CreateCylinder("roof", { diameter: 2, height: 1.2, tessellation: 3 });
+        const roof = MeshBuilder.CreateCylinder("roof", { diameter: 2, height: 1.2, tessellation: 3 }, scene);
         roof.scaling.x = 0.55;
         roof.rotation.y = Math.PI / 2;
         roof.rotation.z = Math.PI / 2;
         roof.position.y = 1.2;
-        const roofMaterial = new StandardMaterial("roofMaterial");
+        const roofMaterial = new StandardMaterial("roofMaterial", scene);
         roofMaterial.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/roof.jpg", scene);
         roof.material = roofMaterial;
-        const boxMaterial = new StandardMaterial("boxMaterial");
-        boxMaterial.diffuseTexture = new Texture("https://www.babylonjs-playground.com/textures/floor.png", scene);
+        const boxMaterial = new StandardMaterial("boxMaterial", scene);
+        boxMaterial.diffuseTexture = new Texture("/texture/cubehouse.png", scene);
         box1.material = boxMaterial;
         engine.runRenderLoop(() => {
             scene.render();
